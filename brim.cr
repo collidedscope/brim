@@ -28,7 +28,7 @@ def flipx(b : UInt8)
 end
 
 def flipy(b : UInt8)
-  (b & 170) >> 1 | (b & 85) << 1
+  (b & 0xAA) >> 1 | (b & 0x55) << 1
 end
 
 def invert(b : UInt8)
