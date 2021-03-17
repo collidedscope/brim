@@ -60,11 +60,11 @@ converted.each do |row|
   row.reverse! if {"flipy", "180"}.includes? op
 
   reverted = case op
-  when "flipx" ; row.map &->flipx(UInt8)
-  when "flipy" ; row.map &->flipy(UInt8)
-  when "invert"; row.map &->invert(UInt8)
-  else           row.map &->rotate180(UInt8)
-  end
+             when "flipx" ; row.map &->flipx(UInt8)
+             when "flipy" ; row.map &->flipy(UInt8)
+             when "invert"; row.map &->invert(UInt8)
+             else           row.map &->rotate180(UInt8)
+             end
 
   puts reverted.map { |c| (0x2800 + UNMAP[c]).chr }.join
 end
