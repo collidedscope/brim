@@ -1,6 +1,6 @@
 # mapping from ISO/TR 11548-1 to "normal" bytes so that we can use the standard
 # bit twiddles for simple operations like flipping and rotation
-MAP = UInt8[
+MAP = [
   0, 128, 32, 160, 8, 136, 40, 168, 64, 192, 96, 224, 72, 200, 104, 232,
   16, 144, 48, 176, 24, 152, 56, 184, 80, 208, 112, 240, 88, 216, 120, 248,
   4, 132, 36, 164, 12, 140, 44, 172, 68, 196, 100, 228, 76, 204, 108, 236,
@@ -17,7 +17,7 @@ MAP = UInt8[
   19, 147, 51, 179, 27, 155, 59, 187, 83, 211, 115, 243, 91, 219, 123, 251,
   7, 135, 39, 167, 15, 143, 47, 175, 71, 199, 103, 231, 79, 207, 111, 239,
   23, 151, 55, 183, 31, 159, 63, 191, 87, 215, 119, 247, 95, 223, 127, 255,
-]
+] of UInt8
 
 # inversion of the above mapping for converting back to ISO/TR 11548-1
 UNMAP = MAP.zip(0u8..255).to_h
