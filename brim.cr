@@ -55,21 +55,17 @@ converted = File.read_lines(file).map &.chars.map { |c|
   MAP[c.ord - 0x2800]? || abort "found non-Braille character: '#{c}'"
 }
 
-case op
-when "flipx"
-  converted.reverse_each { |row|
-    puts row.map { |c| (0x2800 + UNMAP[flipx c]).chr }.join
-  }
-when "flipy"
-  converted.each { |row|
-    puts row.reverse.map { |c| (0x2800 + UNMAP[flipy c]).chr }.join
-  }
-when "invert"
-  converted.each { |row|
-    puts row.map { |c| (0x2800 + UNMAP[invert c]).chr }.join
-  }
-when "180"
-  converted.reverse_each { |row|
-    puts row.reverse.map { |c| (0x2800 + UNMAP[rotate180 c]).chr }.join
-  }
+converted.reverse! if {"flipx", "180"}.includes? op
+
+converted.each do |row|
+  row.reverse! if {"flipy", "180"}.includes? op
+
+  reverted = case op
+  when "flipx" ; row.map &->flipx(UInt8)
+  when "flipy" ; row.map &->flipy(UInt8)
+  when "invert"; row.map &->invert(UInt8)
+  else           row.map &->rotate180(UInt8)
+  end
+
+  puts reverted.map { |c| (0x2800 + UNMAP[c]).chr }.join
 end
