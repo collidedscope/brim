@@ -1,0 +1,75 @@
+# mapping from ISO/TR 11548-1 to "normal" bytes so that we can use the standard
+# bit twiddles for simple operations like flipping and rotation
+MAP = UInt8[
+  0, 128, 32, 160, 8, 136, 40, 168, 64, 192, 96, 224, 72, 200, 104, 232,
+  16, 144, 48, 176, 24, 152, 56, 184, 80, 208, 112, 240, 88, 216, 120, 248,
+  4, 132, 36, 164, 12, 140, 44, 172, 68, 196, 100, 228, 76, 204, 108, 236,
+  20, 148, 52, 180, 28, 156, 60, 188, 84, 212, 116, 244, 92, 220, 124, 252,
+  2, 130, 34, 162, 10, 138, 42, 170, 66, 194, 98, 226, 74, 202, 106, 234,
+  18, 146, 50, 178, 26, 154, 58, 186, 82, 210, 114, 242, 90, 218, 122, 250,
+  6, 134, 38, 166, 14, 142, 46, 174, 70, 198, 102, 230, 78, 206, 110, 238,
+  22, 150, 54, 182, 30, 158, 62, 190, 86, 214, 118, 246, 94, 222, 126, 254,
+  1, 129, 33, 161, 9, 137, 41, 169, 65, 193, 97, 225, 73, 201, 105, 233,
+  17, 145, 49, 177, 25, 153, 57, 185, 81, 209, 113, 241, 89, 217, 121, 249,
+  5, 133, 37, 165, 13, 141, 45, 173, 69, 197, 101, 229, 77, 205, 109, 237,
+  21, 149, 53, 181, 29, 157, 61, 189, 85, 213, 117, 245, 93, 221, 125, 253,
+  3, 131, 35, 163, 11, 139, 43, 171, 67, 195, 99, 227, 75, 203, 107, 235,
+  19, 147, 51, 179, 27, 155, 59, 187, 83, 211, 115, 243, 91, 219, 123, 251,
+  7, 135, 39, 167, 15, 143, 47, 175, 71, 199, 103, 231, 79, 207, 111, 239,
+  23, 151, 55, 183, 31, 159, 63, 191, 87, 215, 119, 247, 95, 223, 127, 255,
+]
+
+# inversion of the above mapping for converting back to ISO/TR 11548-1
+UNMAP = MAP.zip(0u8..255).to_h
+
+def flipx(b : UInt8)
+  b = (b & 0xF0) >> 4 | (b & 0x0F) << 4
+  (b & 0xCC) >> 2 | (b & 0x33) << 2
+end
+
+def flipy(b : UInt8)
+  (b & 170) >> 1 | (b & 85) << 1
+end
+
+def invert(b : UInt8)
+  0xFF - b
+end
+
+def rotate180(b : UInt8)
+  b = (b & 0xF0) >> 4 | (b & 0x0F) << 4
+  b = (b & 0xCC) >> 2 | (b & 0x33) << 2
+  (b & 0xAA) >> 1 | (b & 0x55) << 1
+end
+
+USAGE = "usage: #{PROGRAM_NAME} OPERATION FILE"
+abort USAGE unless ARGV.size == 2
+
+OPERATIONS = {"180", "flipx", "flipy", "invert"}
+op = ARGV[0]
+abort "operation must be one of: #{OPERATIONS}" unless OPERATIONS.includes? op
+
+file = ARGV[1]
+abort "No such file: #{file}" unless File.exists? file
+
+converted = File.read_lines(file).map &.chars.map { |c|
+  MAP[c.ord - 0x2800]? || abort "found non-Braille character: '#{c}'"
+}
+
+case op
+when "flipx"
+  converted.reverse_each { |row|
+    puts row.map { |c| (0x2800 + UNMAP[flipx c]).chr }.join
+  }
+when "flipy"
+  converted.each { |row|
+    puts row.reverse.map { |c| (0x2800 + UNMAP[flipy c]).chr }.join
+  }
+when "invert"
+  converted.each { |row|
+    puts row.map { |c| (0x2800 + UNMAP[invert c]).chr }.join
+  }
+when "180"
+  converted.reverse_each { |row|
+    puts row.reverse.map { |c| (0x2800 + UNMAP[rotate180 c]).chr }.join
+  }
+end
