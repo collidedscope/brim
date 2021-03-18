@@ -32,7 +32,7 @@ def flipy(b : UInt8)
 end
 
 def invert(b : UInt8)
-  0xFF - b
+  0xFFu8 - b
 end
 
 def rotate180(b : UInt8)
@@ -41,30 +41,36 @@ def rotate180(b : UInt8)
 end
 
 USAGE = "usage: #{PROGRAM_NAME} OPERATION FILE"
-abort USAGE unless ARGV.size == 2
+abort USAGE unless ARGV.size >= 2
+
+file = ARGV.pop
 
 OPERATIONS = {"180", "flipx", "flipy", "invert"}
-op = ARGV[0]
-abort "operation must be one of: #{OPERATIONS}" unless OPERATIONS.includes? op
+unless ARGV.all? { |op| OPERATIONS.includes? op }
+  abort "operation must be one or more of: #{OPERATIONS}"
+end
 
-file = ARGV[1]
 abort "No such file: #{file}" unless File.exists? file
 
 converted = File.read_lines(file).map &.chars.map { |c|
   MAP[c.ord - 0x2800]? || abort "found non-Braille character: '#{c}'"
 }
 
-converted.reverse! if {"flipx", "180"}.includes? op
+ARGV.each do |op|
+  converted.reverse! if {"flipx", "180"}.includes? op
+
+  converted.map! { |row|
+    row.reverse! if {"flipy", "180"}.includes? op
+
+    case op
+    when "flipx" ; row.map &->flipx(UInt8)
+    when "flipy" ; row.map &->flipy(UInt8)
+    when "invert"; row.map &->invert(UInt8)
+    else           row.map &->rotate180(UInt8)
+    end
+  }
+end
 
 converted.each do |row|
-  row.reverse! if {"flipy", "180"}.includes? op
-
-  reverted = case op
-             when "flipx" ; row.map &->flipx(UInt8)
-             when "flipy" ; row.map &->flipy(UInt8)
-             when "invert"; row.map &->invert(UInt8)
-             else           row.map &->rotate180(UInt8)
-             end
-
-  puts reverted.map { |c| (0x2800 + UNMAP[c]).chr }.join
+  puts row.map { |c| (0x2800 + UNMAP[c]).chr }.join
 end
