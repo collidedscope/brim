@@ -53,7 +53,9 @@ end
 abort "No such file: #{file}" unless File.exists? file
 
 converted = File.read_lines(file).map &.chars.map { |c|
-  MAP[c.ord - 0x2800]? || abort "found non-Braille character: '#{c}'"
+  i = c.ord - 0x2800
+  abort "found non-Braille character: '#{c}'" unless 0 <= i <= 255
+  MAP[i]
 }
 
 ARGV.each do |op|
