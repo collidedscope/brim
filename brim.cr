@@ -40,7 +40,7 @@ def rotate180(b : UInt8)
   flipy (b & 0xCC) >> 2 | (b & 0x33) << 2
 end
 
-USAGE = "usage: #{PROGRAM_NAME} OPERATION FILE"
+USAGE = "usage: #{PROGRAM_NAME} OPERATION+ FILE"
 abort USAGE unless ARGV.size >= 2
 
 file = ARGV.pop
