@@ -32,7 +32,7 @@ def flipy(b : UInt8)
 end
 
 def invert(b : UInt8)
-  0xFFu8 - b
+  b ^ 0xFF
 end
 
 def rotate180(b : UInt8)
