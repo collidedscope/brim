@@ -40,12 +40,20 @@ def rotate180(b : UInt8)
   flipy (b & 0xCC) >> 2 | (b & 0x33) << 2
 end
 
+def scanh(b : UInt8)
+  b ^ b & 0xCC
+end
+
+def scanv(b : UInt8)
+  b ^ b & 0xAA
+end
+
 USAGE = "usage: #{PROGRAM_NAME} OPERATION+ FILE"
 abort USAGE unless ARGV.size >= 2
 
 file = ARGV.pop
 
-OPERATIONS = {"180", "flipx", "flipy", "invert"}
+OPERATIONS = {"180", "flipx", "flipy", "invert", "scanh", "scanv"}
 unless ARGV.all? { |op| OPERATIONS.includes? op }
   abort "operation must be one or more of: #{OPERATIONS}"
 end
@@ -68,6 +76,8 @@ ARGV.each do |op|
     when "flipx" ; row.map &->flipx(UInt8)
     when "flipy" ; row.map &->flipy(UInt8)
     when "invert"; row.map &->invert(UInt8)
+    when "scanh" ; row.map &->scanh(UInt8)
+    when "scanv" ; row.map &->scanv(UInt8)
     else           row.map &->rotate180(UInt8)
     end
   }
