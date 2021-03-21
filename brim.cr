@@ -40,17 +40,11 @@ def rotate180(b : UInt8)
   flipy (b & 0xCC) >> 2 | (b & 0x33) << 2
 end
 
-def scand(b : UInt8)
-  b ^ b & 0x99
-end
-
-def scanh(b : UInt8)
-  b ^ b & 0xCC
-end
-
-def scanv(b : UInt8)
-  b ^ b & 0xAA
-end
+{% for dir, mask in {d: 0x99, h: 0xCC, v: 0xAA} %}
+  def scan{{dir}}(b)
+    b ^ b & {{mask}}
+  end
+{% end %}
 
 USAGE = "usage: #{PROGRAM_NAME} OPERATION+ FILE"
 abort USAGE unless ARGV.size >= 2
