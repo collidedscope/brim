@@ -40,7 +40,8 @@ def rotate180(b : UInt8)
   flipy (b & 0xCC) >> 2 | (b & 0x33) << 2
 end
 
-{% for dir, mask in {d: 0x99, h: 0xCC, v: 0xAA} %}
+SCAN_MASKS = {d: 0x99, h: 0xCC, hw: 0xF0, v: 0xAA}
+{% for dir, mask in SCAN_MASKS %}
   def scan{{dir}}(b)
     b ^ b & {{mask}}
   end
