@@ -52,7 +52,10 @@ abort USAGE unless ARGV.size >= 2
 
 file = ARGV.pop
 
-OPERATIONS = {"180", "flipx", "flipy", "invert", "scand", "scanh", "scanv"}
+OPERATIONS = {
+  "180", "flipx", "flipy", "invert",
+  "scand", "scanh", "scanhw", "scanv", "scanvw",
+}
 unless ARGV.all? { |op| OPERATIONS.includes? op }
   abort "operation must be one or more of: #{OPERATIONS}"
 end
@@ -77,7 +80,9 @@ ARGV.each do |op|
     when "invert"; row.map &->invert(UInt8)
     when "scand" ; row.map &->scand(UInt8)
     when "scanh" ; row.map &->scanh(UInt8)
+    when "scanhw"; row.map &->scanhw(UInt8)
     when "scanv" ; row.map &->scanv(UInt8)
+    when "scanvw"; row.tap { |r| (r.size // 2).times { |i| r[i * 2 + 1] = 0 } }
     else           row.map &->rotate180(UInt8)
     end
   }
