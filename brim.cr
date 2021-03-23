@@ -69,9 +69,15 @@ converted = File.read_lines(file).map &.chars.map { |c|
 }
 
 ARGV.each do |op|
+  if op == "scandw"
+    next converted.map_with_index! do |row, i|
+      row.map_with_index { |b, j| (i + j).even? ? scandw0 b : scandw1 b }
+    end
+  end
+
   converted.reverse! if {"flipx", "180"}.includes? op
 
-  converted.map_with_index! { |row, i|
+  converted.map! { |row|
     row.reverse! if {"flipy", "180"}.includes? op
 
     case op
@@ -79,8 +85,6 @@ ARGV.each do |op|
     when "flipy" ; row.map &->flipy(UInt8)
     when "invert"; row.map &->invert(UInt8)
     when "scand" ; row.map &->scand(UInt8)
-    when "scandw"
-      row.map_with_index { |b, j| (i + j).even? ? scandw0 b : scandw1 b }
     when "scanh" ; row.map &->scanh(UInt8)
     when "scanhw"; row.map &->scanhw(UInt8)
     when "scanv" ; row.map &->scanv(UInt8)
