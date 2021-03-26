@@ -53,7 +53,7 @@ abort USAGE unless ARGV.size >= 2
 file = ARGV.pop
 
 OPERATIONS = {
-  "180", "flipx", "flipy", "invert",
+  "180", "check", "flipx", "flipy", "invert",
   "scand", "scandw", "scanh", "scanhw", "scanv", "scanvw",
 }
 unless ARGV.all? { |op| OPERATIONS.includes? op }
@@ -69,6 +69,12 @@ converted = File.read_lines(file).map &.chars.map { |c|
 }
 
 ARGV.each do |op|
+  if op == "check"
+    next converted.map_with_index! do |row, i|
+      row.map_with_index { |b, j| (i // 4 + j // 4).even? ? invert b : b }
+    end
+  end
+
   if op == "scandw"
     next converted.map_with_index! do |row, i|
       row.map_with_index { |b, j| (i + j).even? ? scandw0 b : scandw1 b }
