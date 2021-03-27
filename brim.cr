@@ -71,7 +71,7 @@ converted = File.read_lines(file).map &.chars.map { |c|
 ARGV.each do |op|
   if op == "check"
     next converted.map_with_index! do |row, i|
-      row.map_with_index { |b, j| (i // 4 + j // 4).even? ? invert b : b }
+      row.map_with_index { |b, j| (i // 2 + j // 4).even? ? invert b : b }
     end
   end
 
