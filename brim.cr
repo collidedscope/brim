@@ -72,21 +72,16 @@ converted = File.read_lines(file).map &.chars.map { |c|
 }
 
 ARGV.each do |op|
-  if op == "check"
+  if {"check", "scandex", "scansin"}.includes? op
     next converted.map_with_index! do |row, i|
-      row.map_with_index { |b, j| (i // 2 + j // 4).even? ? invert b : b }
-    end
-  end
-
-  if op == "scandex"
-    next converted.map_with_index! do |row, i|
-      row.map_with_index { |b, j| (i + j).even? ? scandex0 b : scandex1 b }
-    end
-  end
-
-  if op == "scansin"
-    next converted.map_with_index! do |row, i|
-      row.map_with_index { |b, j| (i + j).even? ? scansin0 b : scansin1 b }
+      case op
+      when "scandex"
+        row.map_with_index { |b, j| (i + j).even? ? scandex0 b : scandex1 b }
+      when "scansin"
+        row.map_with_index { |b, j| (i + j).even? ? scansin0 b : scansin1 b }
+      else
+        row.map_with_index { |b, j| (i // 2 + j // 4).even? ? invert b : b }
+      end
     end
   end
 
