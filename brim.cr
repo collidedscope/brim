@@ -40,7 +40,10 @@ def rotate180(b : UInt8)
   flipy (b & 0xCC) >> 2 | (b & 0x33) << 2
 end
 
-SCAN_MASKS = {dw0: 0xB4, dw1: 0x4B, h: 0xCC, hw: 0xF0, v: 0xAA}
+SCAN_MASKS = {
+  h: 0xCC, hw: 0xF0, v: 0xAA,
+  dex0: 0xB4, dex1: 0x4B, sin0: 0x1E, sin1: 0xE1
+}
 {% for dir, mask in SCAN_MASKS %}
   def scan{{dir}}(b)
     b ^ b & {{mask}}
@@ -54,7 +57,7 @@ file = ARGV.pop
 
 OPERATIONS = {
   "180", "check", "flipx", "flipy", "invert",
-  "scandw", "scanh", "scanhw", "scanv", "scanvw",
+  "scandex", "scansin", "scanh", "scanhw", "scanv", "scanvw",
 }
 unless ARGV.all? { |op| OPERATIONS.includes? op }
   abort "operation must be one or more of: #{OPERATIONS}"
@@ -75,9 +78,15 @@ ARGV.each do |op|
     end
   end
 
-  if op == "scandw"
+  if op == "scandex"
     next converted.map_with_index! do |row, i|
-      row.map_with_index { |b, j| (i + j).even? ? scandw0 b : scandw1 b }
+      row.map_with_index { |b, j| (i + j).even? ? scandex0 b : scandex1 b }
+    end
+  end
+
+  if op == "scansin"
+    next converted.map_with_index! do |row, i|
+      row.map_with_index { |b, j| (i + j).even? ? scansin0 b : scansin1 b }
     end
   end
 
