@@ -40,7 +40,7 @@ def rotate180(b : UInt8)
   flipy (b & 0xCC) >> 2 | (b & 0x33) << 2
 end
 
-SCAN_MASKS = {d: 0x99, dw0: 0xB4, dw1: 0x4B, h: 0xCC, hw: 0xF0, v: 0xAA}
+SCAN_MASKS = {dw0: 0xB4, dw1: 0x4B, h: 0xCC, hw: 0xF0, v: 0xAA}
 {% for dir, mask in SCAN_MASKS %}
   def scan{{dir}}(b)
     b ^ b & {{mask}}
@@ -54,7 +54,7 @@ file = ARGV.pop
 
 OPERATIONS = {
   "180", "check", "flipx", "flipy", "invert",
-  "scand", "scandw", "scanh", "scanhw", "scanv", "scanvw",
+  "scandw", "scanh", "scanhw", "scanv", "scanvw",
 }
 unless ARGV.all? { |op| OPERATIONS.includes? op }
   abort "operation must be one or more of: #{OPERATIONS}"
@@ -90,7 +90,6 @@ ARGV.each do |op|
     when "flipx" ; row.map &->flipx(UInt8)
     when "flipy" ; row.map &->flipy(UInt8)
     when "invert"; row.map &->invert(UInt8)
-    when "scand" ; row.map &->scand(UInt8)
     when "scanh" ; row.map &->scanh(UInt8)
     when "scanhw"; row.map &->scanhw(UInt8)
     when "scanv" ; row.map &->scanv(UInt8)
