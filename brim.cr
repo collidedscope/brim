@@ -42,7 +42,7 @@ end
 
 SCAN_MASKS = {
   h: 0xCC, hw: 0xF0, v: 0xAA,
-  dex0: 0xB4, dex1: 0x4B, sin0: 0x1E, sin1: 0xE1
+  dex0: 0xB4, dex1: 0x4B, sin0: 0x1E, sin1: 0xE1,
 }
 {% for dir, mask in SCAN_MASKS %}
   def scan{{dir}}(b)
@@ -65,7 +65,8 @@ end
 
 abort "No such file: #{file}" unless File.exists? file
 
-converted = File.read_lines(file).map &.chars.map { |c|
+lines = file == "-" ? STDIN.each_line.to_a : File.read_lines file
+converted = lines.map &.chars.map { |c|
   i = c.ord - 0x2800
   abort "found non-Braille character: '#{c}'" unless 0 <= i <= 255
   MAP[i]
