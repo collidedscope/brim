@@ -40,7 +40,7 @@ def rotate180(b : UInt8)
   flipy (b & 0xCC) >> 2 | (b & 0x33) << 2
 end
 
-def zigzag(b : UInt8)
+def stipple(b : UInt8)
   b & 0x99
 end
 
@@ -60,7 +60,7 @@ abort USAGE unless ARGV.size >= 2
 file = ARGV.pop
 
 OPERATIONS = {
-  "180", "check", "flipx", "flipy", "invert", "zigzag",
+  "180", "check", "flipx", "flipy", "invert", "stipple",
   "scandex", "scansin", "scanh", "scanhw", "scanv", "scanvw",
 }
 unless ARGV.all? { |op| OPERATIONS.includes? op }
@@ -99,7 +99,7 @@ ARGV.each do |op|
     when "flipx" ; row.map &->flipx(UInt8)
     when "flipy" ; row.map &->flipy(UInt8)
     when "invert"; row.map &->invert(UInt8)
-    when "zigzag"; row.map &->zigzag(UInt8)
+    when "stipple"; row.map &->stipple(UInt8)
     when "scanh" ; row.map &->scanh(UInt8)
     when "scanhw"; row.map &->scanhw(UInt8)
     when "scanv" ; row.map &->scanv(UInt8)
