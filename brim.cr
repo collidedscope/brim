@@ -60,7 +60,7 @@ abort USAGE unless ARGV.size >= 2
 file = ARGV.pop
 
 OPERATIONS = {
-  "180", "check", "flipx", "flipy", "invert", "stipple",
+  "180", "check", "flipx", "flipy", "invert", "stipple", "encode",
   "scandex", "scansin", "scanh", "scanhw", "scanv", "scanvw",
 }
 unless ARGV.all? { |op| OPERATIONS.includes? op }
@@ -77,6 +77,15 @@ converted = lines.map &.chars.map { |c|
 }
 
 ARGV.each do |op|
+  if op == "encode"
+    STDOUT.write_byte converted.size.to_u8
+    STDOUT.write_byte converted.first.size.to_u8
+    converted.each do |row|
+      print String.build { |s| row.each &->s.write_byte(UInt8) }
+    end
+    exit
+  end
+
   if {"check", "scandex", "scansin"}.includes? op
     next converted.map_with_index! do |row, i|
       case op
