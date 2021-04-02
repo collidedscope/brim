@@ -60,7 +60,7 @@ abort USAGE unless ARGV.size >= 2
 file = ARGV.pop
 
 OPERATIONS = {
-  "180", "check", "flipx", "flipy", "invert", "stipple", "encode",
+  "180", "check", "check1", "flipx", "flipy", "invert", "stipple", "encode",
   "scandex", "scansin", "scanh", "scanhw", "scanv", "scanvw",
 }
 unless ARGV.all? { |op| OPERATIONS.includes? op }
@@ -86,13 +86,15 @@ ARGV.each do |op|
     exit
   end
 
-  if {"check", "scandex", "scansin"}.includes? op
+  if {"check", "check1", "scandex", "scansin"}.includes? op
     next converted.map_with_index! do |row, i|
       case op
       when "scandex"
         row.map_with_index { |b, j| (i + j).even? ? scandex0 b : scandex1 b }
       when "scansin"
         row.map_with_index { |b, j| (i + j).even? ? scansin0 b : scansin1 b }
+      when "check1"
+        row.map_with_index { |b, j| (i + j).even? ? 0u8 : b }
       else
         row.map_with_index { |b, j| (i // 2 + j // 4).even? ? invert b : b }
       end
