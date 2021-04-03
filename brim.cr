@@ -107,15 +107,15 @@ ARGV.each do |op|
     row.reverse! if {"flipy", "180"}.includes? op
 
     case op
-    when "flipx" ; row.map &->flipx(UInt8)
-    when "flipy" ; row.map &->flipy(UInt8)
-    when "invert"; row.map &->invert(UInt8)
+    when "flipx"  ; row.map &->flipx(UInt8)
+    when "flipy"  ; row.map &->flipy(UInt8)
+    when "invert" ; row.map &->invert(UInt8)
     when "stipple"; row.map &->stipple(UInt8)
-    when "scanh" ; row.map &->scanh(UInt8)
-    when "scanhw"; row.map &->scanhw(UInt8)
-    when "scanv" ; row.map &->scanv(UInt8)
-    when "scanvw"; row.tap { |r| (r.size // 2).times { |i| r[i * 2 + 1] = 0 } }
-    else           row.map &->rotate180(UInt8)
+    when "scanh"  ; row.map &->scanh(UInt8)
+    when "scanhw" ; row.map &->scanhw(UInt8)
+    when "scanv"  ; row.map &->scanv(UInt8)
+    when "scanvw" ; row.tap { |r| (r.size // 2).times { |i| r[i * 2 + 1] = 0 } }
+    else            row.map &->rotate180(UInt8)
     end
   }
 end
