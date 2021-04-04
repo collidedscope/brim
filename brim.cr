@@ -48,6 +48,10 @@ def circles(b : UInt8, i)
   b & {0x69, 0x96}[i & 1]
 end
 
+def razors(b : UInt8, i)
+  b & {0x7D, 0xBE}[i & 1]
+end
+
 SCAN_MASKS = {
   h: 0xCC, hw: 0xF0, v: 0xAA,
   dex0: 0xB4, dex1: 0x4B, sin0: 0x1E, sin1: 0xE1,
@@ -65,7 +69,7 @@ file = ARGV.pop
 
 OPERATIONS = {
   "180", "check", "check1", "flipx", "flipy", "invert", "stipple", "encode",
-  "scandex", "scansin", "scanh", "scanhw", "scanv", "scanvw", "circles",
+  "scandex", "scansin", "scanh", "scanhw", "scanv", "scanvw", "circles", "razors",
 }
 unless ARGV.all? { |op| OPERATIONS.includes? op }
   abort "operation must be one or more of: #{OPERATIONS}"
@@ -120,6 +124,7 @@ ARGV.each do |op|
     when "scanv"  ; row.map &->scanv(UInt8)
     when "scanvw" ; row.tap { |r| (r.size // 2).times { |i| r[i * 2 + 1] = 0 } }
     when "circles"; row.map_with_index &->circles(UInt8, Int32)
+    when "razors" ; row.map_with_index &->razors(UInt8, Int32)
     else            row.map &->rotate180(UInt8)
     end
   }
