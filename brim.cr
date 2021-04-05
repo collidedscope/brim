@@ -68,7 +68,7 @@ abort USAGE unless ARGV.size >= 2
 file = ARGV.pop
 
 OPERATIONS = {
-  "180", "check", "check1", "flipx", "flipy", "invert", "stipple", "encode",
+  "180", "check", "check1", "flipx", "flipy", "invert", "stipple", "encode", "rainbow",
   "scandex", "scansin", "scanh", "scanhw", "scanv", "scanvw", "circles", "razors",
 }
 unless ARGV.all? { |op| OPERATIONS.includes? op }
@@ -125,11 +125,18 @@ ARGV.each do |op|
     when "scanvw" ; row.tap { |r| (r.size // 2).times { |i| r[i * 2 + 1] = 0 } }
     when "circles"; row.map_with_index &->circles(UInt8, Int32)
     when "razors" ; row.map_with_index &->razors(UInt8, Int32)
-    else            row.map &->rotate180(UInt8)
+    when "180"    ; row.map &->rotate180(UInt8)
+    else            row
     end
   }
 end
 
-converted.each do |row|
+COLORS = {196, 202, 226, 40, 21, 93, 201}
+rainbow = ARGV.includes? "rainbow"
+
+converted.each_with_index do |row, i|
+  print "\e[38;5;#{COLORS[i % 7]}m" if rainbow
   puts row.map { |c| (0x2800 + UNMAP[c]).chr }.join
 end
+
+print "\e[m" if rainbow
