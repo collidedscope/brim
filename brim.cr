@@ -75,7 +75,9 @@ unless ARGV.all? { |op| OPERATIONS.includes? op }
   abort "operation must be one or more of: #{OPERATIONS}"
 end
 
-abort "No such file: #{file}" unless File.exists? file
+if file != "-"
+  abort "No such file: #{file}" unless File.exists? file
+end
 
 lines = file == "-" ? STDIN.each_line.to_a : File.read_lines file
 converted = lines.map &.chars.map { |c|
