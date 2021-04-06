@@ -68,7 +68,7 @@ abort USAGE unless ARGV.size >= 2
 file = ARGV.pop
 
 OPERATIONS = {
-  "180", "check", "check1", "flipx", "flipy", "invert", "stipple", "encode", "rainbow",
+  "180", "check", "check1", "flipx", "flipy", "invert", "stipple", "encode", "decode", "rainbow",
   "scandex", "scansin", "scanh", "scanhw", "scanv", "scanvw", "circles", "razors",
 }
 unless ARGV.all? { |op| OPERATIONS.includes? op }
@@ -79,12 +79,21 @@ if file != "-"
   abort "No such file: #{file}" unless File.exists? file
 end
 
-lines = file == "-" ? STDIN.each_line.to_a : File.read_lines file
-converted = lines.map &.chars.map { |c|
-  i = c.ord - 0x2800
-  abort "found non-Braille character: '#{c}'" unless 0 <= i <= 255
-  MAP[i]
-}
+if ARGV.includes? "decode"
+  input = file == "-" ? STDIN : File.open file
+  height, width = input.read_byte.not_nil!, input.read_byte.not_nil!
+  converted = Array.new(height) {
+    Bytes.new(width).tap { |b| input.read b }.to_a
+  }
+  input.close
+else
+  lines = file == "-" ? STDIN.each_line.to_a : File.read_lines file
+  converted = lines.map &.chars.map { |c|
+    i = c.ord - 0x2800
+    abort "found non-Braille character: '#{c}'" unless 0 <= i <= 255
+    MAP[i]
+  }
+end
 
 ARGV.each do |op|
   if op == "encode"
