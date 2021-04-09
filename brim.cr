@@ -66,7 +66,7 @@ SCAN_MASKS = {
 }
 {% for dir, mask in SCAN_MASKS %}
   def scan{{dir}}(b)
-    b ^ b & {{mask}}
+    b & {{mask}}
   end
 {% end %}
 
