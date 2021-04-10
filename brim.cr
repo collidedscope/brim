@@ -60,6 +60,10 @@ def waves(b : UInt8, i)
   b & {0x66, 0x99}[i & 1]
 end
 
+def zigzag(b : UInt8, i)
+  b & {0x07, 0x78, 0xB4, 0x0B}[i & 3]
+end
+
 SCAN_MASKS = {
   h: 0xCC, hw: 0xF0, v: 0xAA,
   dex0: 0xB4, dex1: 0x4B, sin0: 0x1E, sin1: 0xE1,
@@ -77,7 +81,7 @@ file = ARGV.pop
 
 OPERATIONS = {
   "180", "check", "check1", "flipx", "flipy", "invert", "stipple", "encode", "decode", "rainbow",
-  "scandex", "scansin", "scanh", "scanhw", "scanv", "scanvw", "circles", "razors", "squares", "waves",
+  "scandex", "scansin", "scanh", "scanhw", "scanv", "scanvw", "circles", "razors", "squares", "waves", "zigzag"
 }
 unless ARGV.all? { |op| OPERATIONS.includes? op }
   abort "operation must be one or more of: #{OPERATIONS}"
@@ -146,6 +150,7 @@ ARGV.each do |op|
     when "razors" ; row.map_with_index &->razors(UInt8, Int32)
     when "squares"; row.map_with_index &->squares(UInt8, Int32)
     when "waves"  ; row.map_with_index &->waves(UInt8, Int32)
+    when "zigzag" ; row.map_with_index &->zigzag(UInt8, Int32)
     when "180"    ; row.map &->rotate180(UInt8)
     else            row
     end
