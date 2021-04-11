@@ -64,6 +64,10 @@ def zigzag(b : UInt8, i)
   b & {0x07, 0x78, 0xB4, 0x0B}[i & 3]
 end
 
+def zigzagv(b : UInt8, i, j)
+  b & {0xB4, 0x0B, 0x1E, 0xE0}[i << 1 | j]
+end
+
 SCAN_MASKS = {
   h: 0xCC, hw: 0xF0, v: 0xAA,
   dex0: 0xB4, dex1: 0x4B, sin0: 0x1E, sin1: 0xE1,
@@ -80,8 +84,10 @@ abort USAGE unless ARGV.size >= 2
 file = ARGV.pop
 
 OPERATIONS = {
-  "180", "check", "check1", "flipx", "flipy", "invert", "stipple", "encode", "decode", "rainbow",
-  "scandex", "scansin", "scanh", "scanhw", "scanv", "scanvw", "circles", "razors", "squares", "waves", "zigzag"
+  "180", "check", "check1", "flipx", "flipy", "invert", "stipple",
+  "scandex", "scansin", "scanh", "scanhw", "scanv", "scanvw",
+  "circles", "razors", "squares", "waves", "zigzag", "zigzagv",
+  "encode", "decode", "rainbow",
 }
 unless ARGV.all? { |op| OPERATIONS.includes? op }
   abort "operation must be one or more of: #{OPERATIONS}"
@@ -117,7 +123,7 @@ ARGV.each do |op|
     exit
   end
 
-  if {"check", "check1", "scandex", "scansin"}.includes? op
+  if {"check", "check1", "scandex", "scansin", "zigzagv"}.includes? op
     next converted.map_with_index! do |row, i|
       case op
       when "scandex"
@@ -126,6 +132,8 @@ ARGV.each do |op|
         row.map_with_index { |b, j| (i + j).even? ? scansin0 b : scansin1 b }
       when "check1"
         row.map_with_index { |b, j| (i + j).even? ? 0u8 : b }
+      when "zigzagv"
+        row.map_with_index { |b, j| zigzagv b, i & 1, j & 1 }
       else
         row.map_with_index { |b, j| (i // 2 + j // 4).even? ? invert b : b }
       end
