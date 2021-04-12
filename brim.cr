@@ -126,16 +126,18 @@ ARGV.each do |op|
   if {"check", "check1", "scandex", "scansin", "zigzagv"}.includes? op
     next converted.map_with_index! do |row, i|
       case op
+      when "check"
+        row.map_with_index { |b, j| (i // 2 + j // 4).even? ? invert b : b }
+      when "check1"
+        row.map_with_index { |b, j| (i + j).even? ? 0u8 : b }
       when "scandex"
         row.map_with_index { |b, j| (i + j).even? ? scandex0 b : scandex1 b }
       when "scansin"
         row.map_with_index { |b, j| (i + j).even? ? scansin0 b : scansin1 b }
-      when "check1"
-        row.map_with_index { |b, j| (i + j).even? ? 0u8 : b }
       when "zigzagv"
         row.map_with_index { |b, j| zigzagv b, i & 1, j & 1 }
       else
-        row.map_with_index { |b, j| (i // 2 + j // 4).even? ? invert b : b }
+        raise "unreachable"
       end
     end
   end
