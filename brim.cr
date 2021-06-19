@@ -87,7 +87,7 @@ OPERATIONS = {
   "180", "check", "check1", "flipx", "flipy", "invert", "stipple",
   "scandex", "scansin", "scanh", "scanhw", "scanv", "scanvw",
   "circles", "razors", "squares", "waves", "zigzag", "zigzagv",
-  "encode", "decode", "rainbow",
+  "encode", "decode", "rainbow", "dims",
 }
 unless ARGV.all? { |op| OPERATIONS.includes? op }
   abort "operation must be one or more of: #{OPERATIONS}"
@@ -120,6 +120,10 @@ ARGV.each do |op|
     converted.each do |row|
       print String.build { |s| row.each &->s.write_byte(UInt8) }
     end
+    exit
+  elsif op == "dims"
+    width, height = converted[0].size, converted.size
+    puts "#{width * 2}x#{height * 4}"
     exit
   end
 
