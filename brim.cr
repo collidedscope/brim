@@ -141,7 +141,7 @@ ARGV.each do |op|
       when "zigzagv"
         row.map_with_index { |b, j| zigzagv b, i & 1, j & 1 }
       when "hatch"
-        row.map_with_index { |b, j| (i.odd? || j.odd?) ? b : 0u8 }
+        row.map_with_index { |b, j| j.odd? ? b : b & 15 }
       else
         raise "unreachable"
       end
