@@ -86,7 +86,7 @@ file = ARGV.pop
 OPERATIONS = {
   "180", "check", "check1", "flipx", "flipy", "invert", "stipple",
   "scandex", "scansin", "scanh", "scanhw", "scanv", "scanvw",
-  "circles", "razors", "squares", "waves", "zigzag", "zigzagv",
+  "circles", "razors", "squares", "waves", "zigzag", "zigzagv", "hatch",
   "encode", "decode", "rainbow", "dims",
 }
 unless ARGV.all? { |op| OPERATIONS.includes? op }
@@ -127,7 +127,7 @@ ARGV.each do |op|
     exit
   end
 
-  if {"check", "check1", "scandex", "scansin", "zigzagv"}.includes? op
+  if {"check", "check1", "scandex", "scansin", "zigzagv", "hatch"}.includes? op
     next converted.map_with_index! do |row, i|
       case op
       when "check"
@@ -140,6 +140,8 @@ ARGV.each do |op|
         row.map_with_index { |b, j| (i + j).even? ? scansin0 b : scansin1 b }
       when "zigzagv"
         row.map_with_index { |b, j| zigzagv b, i & 1, j & 1 }
+      when "hatch"
+        row.map_with_index { |b, j| (i.odd? || j.odd?) ? b : 0u8 }
       else
         raise "unreachable"
       end
