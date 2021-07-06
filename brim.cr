@@ -68,6 +68,10 @@ def zigzagv(b : UInt8, i, j)
   b & {0xB4, 0x0B, 0x1E, 0xE0}[i << 1 | j]
 end
 
+def mutate(b : UInt8)
+  b ^ 2 ** rand 8
+end
+
 SCAN_MASKS = {
   h: 0xCC, hw: 0xF0, v: 0xAA,
   dex0: 0xB4, dex1: 0x4B, sin0: 0x1E, sin1: 0xE1,
@@ -87,7 +91,7 @@ OPERATIONS = {
   "180", "check", "check1", "flipx", "flipy", "invert", "stipple",
   "scandex", "scansin", "scanh", "scanhw", "scanv", "scanvw",
   "circles", "razors", "squares", "waves", "zigzag", "zigzagv", "hatch",
-  "encode", "decode", "rainbow", "dims",
+  "encode", "decode", "rainbow", "dims", "mutate",
 }
 unless ARGV.all? { |op| OPERATIONS.includes? op }
   abort "operation must be one or more of: #{OPERATIONS}"
@@ -161,6 +165,7 @@ ARGV.each do |op|
     when "scanh"  ; row.map &->scanh(UInt8)
     when "scanhw" ; row.map &->scanhw(UInt8)
     when "scanv"  ; row.map &->scanv(UInt8)
+    when "mutate" ; row.map &->mutate(UInt8)
     when "180"    ; row.map &->rotate180(UInt8)
     when "circles"; row.map_with_index &->circles(UInt8, Int32)
     when "razors" ; row.map_with_index &->razors(UInt8, Int32)
