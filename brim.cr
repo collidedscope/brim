@@ -161,13 +161,13 @@ ARGV.each do |op|
     when "scanh"  ; row.map &->scanh(UInt8)
     when "scanhw" ; row.map &->scanhw(UInt8)
     when "scanv"  ; row.map &->scanv(UInt8)
-    when "scanvw" ; row.tap { |r| (r.size // 2).times { |i| r[i * 2 + 1] = 0 } }
+    when "180"    ; row.map &->rotate180(UInt8)
     when "circles"; row.map_with_index &->circles(UInt8, Int32)
     when "razors" ; row.map_with_index &->razors(UInt8, Int32)
     when "squares"; row.map_with_index &->squares(UInt8, Int32)
     when "waves"  ; row.map_with_index &->waves(UInt8, Int32)
     when "zigzag" ; row.map_with_index &->zigzag(UInt8, Int32)
-    when "180"    ; row.map &->rotate180(UInt8)
+    when "scanvw" ; row.tap { |r| (r.size // 2).times { |i| r[i * 2 + 1] = 0 } }
     else            row
     end
   }
